@@ -72,7 +72,7 @@ my_module = "my_module.main:main"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.0.0"
+version = "0.0.1"
 tag_format = "v$version"
 
 [build-system]
