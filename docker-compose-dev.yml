@@ -1,0 +1,62 @@
+version: "3.9"
+
+networks:
+  rms-sth-local-vpc:
+    driver: bridge
+
+volumes:
+  dbdata: {}
+  shared: {}
+
+services:
+  my-module-meilisearch:
+    image: getmeili/meilisearch:v0.28.1
+    ports:
+      - "${CDS_MEILISEARCH_PORT}"
+    networks:
+      - rms-sth-local-vpc
+    env_file:
+      - ./.env
+    environment:
+      - MEILI_MASTER_KEY=${CDS_MEILISEARCH_MASTER_KEY}
+      - MEILI_NO_ANALYTICS=${CDS_MEILISEARCH_NO_ANALYTICS}
+    container_name: my-module-meilisearch
+    volumes:
+      - shared:/tmp/rms-sth-debt-service
+
+  my-module-postgres:
+    image: postgres:14.5-bullseye
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    container_name: my-module-postgres
+    ports:
+      - '${CDS_POSTGRES_PORT}:5432'
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+      - shared:/tmp/rms-sth-debt-service
+
+  my-module-bitnami-redis:
+    image: bitnami/redis:latest
+    env_file:
+      - ./.env
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL,CONFIG
+    container_name: my-module-bitnami-redis-container
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    networks:
+      - rms-sth-local-vpc
+    stdin_open: true
+    tty: true
+    ports:
+      - '${CDS_REDIS_PORT}:6379'
+    expose:
+      - '${CDS_REDIS_PORT}'

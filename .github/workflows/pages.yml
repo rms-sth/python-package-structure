@@ -1,0 +1,51 @@
+# This GitHub Actions job will build the user guide and publish it to the
+# gh-pages branch each time the master branch is updated. This branch is
+# configured to be served automatically using GitHub Pages.
+name: pages
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install poetry
+        run: pipx install poetry
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: "poetry"
+
+      - name: Install all dependencies, including Nox
+        run: poetry install
+
+      # publish docs to github_pages using invoke or nox
+      - name: Publish Docs
+        run: poetry run invoke docs-github-pages
+        # run: poetry run nox -s docs_github_pages
+
+      # - name: Configure Git user
+      #   run: |
+      #     git config --local user.email "github-actions[bot]@users.noreply.github.com"
+      #     git config --local user.name "github-actions[bot]"
+      #     git pull origin
+
+      # - name: "Get Previous tag"
+      #   id: previous_tag
+      #   uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      #   with:
+      #     fallback: 0.0.1 # Optional fallback tag to use when no tag can be found
+
+      # - name: Check tag name
+      #   run: |
+      #     echo ${{ steps.previous_tag.outputs.tag }}
+
+      # - name: Deploy with mike 🚀
+      #   run: |
+      #     poetry run mike deploy --push --update aliases ${{ steps.previous_tag.outputs.tag }} latest
