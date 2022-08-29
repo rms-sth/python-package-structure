@@ -11,10 +11,6 @@ resource_path = os.path.join(
 )
 
 
-def create_tasks(some_parameter: str | None = None) -> bool:  # noqa: D103
-    return True
-
-
 class TaskProcessor:
     def __init__(self, filename: str = "deals.json", index: str = "deals") -> None:
         self.filename = filename
@@ -65,4 +61,4 @@ class TaskProcessor:
 
     def read_from_redis(self):
         result = self.client.json().get(self.index)
-        print(result)
+        return result or {}

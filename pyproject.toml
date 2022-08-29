@@ -67,6 +67,8 @@ mkdocs-gen-files = "*"
 mkdocs-literate-nav = "*"
 mike = "^1.1.2"
 invoke = "^1.7.1"
+mock = "^4.0.3"
+pytest-mock = "^3.8.2"
 
 [tool.poetry.scripts]
 my_module = "my_module.main:main"
