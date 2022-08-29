@@ -27,6 +27,7 @@ classifiers = [
 # Without also constraining the upper bound here, Poetry will not select those versions and will
 # result in an old version being resolved/locked.
 python = "^3.10, <3.11"
+redis-om = "^0.0.27"
 
 [tool.poetry.dev-dependencies]
 nox-poetry = "*"

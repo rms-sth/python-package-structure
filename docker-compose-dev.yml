@@ -39,14 +39,14 @@ services:
       - dbdata:/var/lib/postgresql/data
       - shared:/tmp/rms-sth-debt-service
 
-  my-module-bitnami-redis:
-    image: bitnami/redis:latest
+  my-module-redis-stack-redis:
+    image: redis/redis-stack:latest
     env_file:
       - ./.env
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL,CONFIG
-    container_name: my-module-bitnami-redis-container
+    container_name: my-module-redis-stack-redis-container
     healthcheck:
       test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
       interval: 1s
